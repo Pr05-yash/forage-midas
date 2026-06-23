@@ -33,25 +33,24 @@ public class TaskThreeTests {
 
 @Test
 void task_three_verifier() throws InterruptedException {
-    userPopulator.populate();
+    System.out.println(">>> [DEBUG] TEST START HO GAYA HAI!"); // Check karne ke liye
     
-    // Kafka ko message process karne ke liye time dein
-    Thread.sleep(5000); 
+    userPopulator.populate();
+    Thread.sleep(2000); 
     
     String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
     for (String transactionLine : transactionLines) {
         kafkaProducer.send(transactionLine);
     }
     
-    // Yahan main wait 10 seconds ka hai, isse zyada nahi
-    Thread.sleep(10000); 
+    System.out.println(">>> [DEBUG] MESSAGES BHEJ DIYE HAIN, AB WAIT KAR RAHE HAIN...");
+    Thread.sleep(10000); // 10 second wait
 
     var waldorf = userRepository.findByName("Waldorf");
     
-    // PRINT RESULT
     if (waldorf != null) {
-        System.out.println("WALDORF FINAL BALANCE: " + waldorf.getBalance());
+        System.out.println(">>> WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
     } else {
-        System.out.println("WALDORF NAHI MILA!");
+        System.out.println(">>> ERROR: WALDORF NAHI MILA!");
     }
 }
