@@ -33,6 +33,7 @@ public class TaskThreeTests {
 
  @Test
 void task_three_verifier() throws InterruptedException {
+    System.out.println(">>> TEST START HO GAYA HAI!");
     userPopulator.populate();
     
     // Kafka ko settle hone ka time dein
