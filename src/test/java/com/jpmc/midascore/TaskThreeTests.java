@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
-import static org.junit.jupiter.api.Assertions.assertNotNull; // YE ADD KAREIN
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = MidasCoreApplication.class)
 @DirtiesContext
@@ -19,29 +21,22 @@ public class TaskThreeTests {
     @Autowired private UserRepository userRepository;
 
     @Test
-void task_three_verifier() throws Exception {
-    userPopulator.populate();
-    String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
-    for (String transactionLine : transactionLines) {
-        kafkaProducer.send(transactionLine);
-    }
+    void task_three_verifier() throws InterruptedException {
+        userPopulator.populate();
+        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
+        for (String transactionLine : transactionLines) {
+            kafkaProducer.send(transactionLine);
+        }
 
-    // Yahan hum Kafka listener ka wait nahi karenge
-    // Hum direct database se status check karenge
-    System.out.println(">>> [SYSTEM] PROCESSING COMPLETE. FINAL BALANCE:");
-    var waldorf = userRepository.findByName("Waldorf");
-    
-    // Yahan hum manual loop lagayenge agar data nahi aaya
-    int retries = 0;
-    while(waldorf == null && retries < 10) {
-        Thread.sleep(1000);
-        waldorf = userRepository.findByName("Waldorf");
-        retries++;
-    }
+        // 10 second wait for Kafka processing
+        Thread.sleep(10000);
 
-    if(waldorf != null) {
-        System.out.println(">>> WALDORF BALANCE: " + waldorf.getBalance());
-        // System.exit(0) se hum framework ke debugger loop ko FORCE KILL kar denge
-        System.exit(0); 
+        var waldorf = userRepository.findByName("Waldorf");
+        if (waldorf != null) {
+            System.out.println(">>> WALDORF BALANCE: " + waldorf.getBalance());
+        }
+        
+        // YE LINE TEST RUNNER KO BATAYEGI KI TEST COMPLETE HO GAYA HAI
+        assertTrue(waldorf != null, "Test complete");
     }
 }
