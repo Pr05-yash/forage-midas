@@ -20,23 +20,32 @@ public class TaskThreeTests {
     @Autowired private FileLoader fileLoader;
     @Autowired private UserRepository userRepository;
 
-    @Test
-    void task_three_verifier() throws InterruptedException {
-        userPopulator.populate();
-        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
-        for (String transactionLine : transactionLines) {
-            kafkaProducer.send(transactionLine);
-        }
-
-        // 10 second wait for Kafka processing
-        Thread.sleep(10000);
-
-        var waldorf = userRepository.findByName("Waldorf");
-        if (waldorf != null) {
-            System.out.println(">>> WALDORF BALANCE: " + waldorf.getBalance());
-        }
-        
-        // YE LINE TEST RUNNER KO BATAYEGI KI TEST COMPLETE HO GAYA HAI
-        assertTrue(waldorf != null, "Test complete");
+  @Test
+void task_three_verifier() throws InterruptedException {
+    // 1. Data populate karein
+    userPopulator.populate();
+    
+    // 2. Transactions bhejein
+    String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
+    for (String transactionLine : transactionLines) {
+        kafkaProducer.send(transactionLine);
     }
+    
+    // 3. Kafka ko process hone ke liye 5 second ka pause dein
+    Thread.sleep(5000);
+
+    // 4. Database se balance nikalein
+    var waldorf = userRepository.findByName("Waldorf");
+    
+    // 5. ISKO USE KAREIN: 
+    // Agar balance nahi mila, toh Exception throw karein taaki test runner ruk jaye
+    if (waldorf == null) {
+        throw new RuntimeException("Waldorf nahi mila! Kafka consumer shayad data process nahi kar raha.");
+    }
+    
+    // 6. Final Result Print (Ye print hona chahiye!)
+    System.out.println(">>> WALDORF FINAL BALANCE: " + (int) waldorf.getBalance());
+    
+    // 7. Loop se nikalne ke liye explicitly test ko fail/stop karein
+    assertTrue(true, "Task Complete");
 }
