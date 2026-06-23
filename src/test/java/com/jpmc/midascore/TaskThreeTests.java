@@ -33,17 +33,23 @@ public class TaskThreeTests {
         }
         
         // Kafka process hone ka wait
-        Thread.sleep(10000); 
-        // --- YEH CODE MISSING HAI, ISE ADD KAREIN ---
-        var waldorf = userRepository.findByName("Waldorf");
-        if (waldorf != null) {
-            logger.info("**********************************************************");
-            logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
-            logger.info("**********************************************************");
-        }
-        // ---------------------------------------------
-    }
+       Thread.sleep(10000); 
+
+var allUsers = userRepository.findAll();
+logger.info("DEBUG: Database mein kitne users hain: " + allUsers.size());
+for (var user : allUsers) {
+    logger.info("DEBUG: User mila: " + user.getName() + " | Balance: " + user.getBalance());
 }
+
+var waldorf = userRepository.findByName("Waldorf");
+if (waldorf == null) {
+    logger.info("ERROR: Waldorf database mein nahi mila!");
+} else {
+    logger.info("**********************************************************");
+    logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
+    logger.info("**********************************************************");
+}
+        
 
         var waldorf = userRepository.findByName("Waldorf");
         if (waldorf != null) {
