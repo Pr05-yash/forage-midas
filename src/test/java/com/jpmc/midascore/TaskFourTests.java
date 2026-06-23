@@ -10,7 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:0", "port=0"})
 public class TaskFourTests {
     static final Logger logger = LoggerFactory.getLogger(TaskFourTests.class);
 
@@ -22,6 +22,10 @@ public class TaskFourTests {
 
     @Autowired
     private FileLoader fileLoader;
+    
+    // Yahan aap apna repository inject karein (jaise UserRepository)
+    @Autowired
+    private UserRepository userRepository; 
 
     @Test
     void task_four_verifier() throws InterruptedException {
@@ -30,17 +34,14 @@ public class TaskFourTests {
         for (String transactionLine : transactionLines) {
             kafkaProducer.send(transactionLine);
         }
-        Thread.sleep(2000);
+        
+        // Kafka ko process karne ka time dein
+        Thread.sleep(5000); 
 
-
-        logger.info("----------------------------------------------------------");
-        logger.info("----------------------------------------------------------");
-        logger.info("----------------------------------------------------------");
-        logger.info("use your debugger to find out what wilbur's balance is after all transactions are processed");
-        logger.info("kill this test once you find the answer");
-        while (true) {
-            Thread.sleep(20000);
-            logger.info("...");
-        }
+        // Wilbur ka balance fetch karke print karein
+        User wilbur = userRepository.findByName("Wilbur");
+        logger.info("**********************************************************");
+        logger.info("FINAL BALANCE OF WILBUR: " + wilbur.getBalance());
+        logger.info("**********************************************************");
     }
 }
