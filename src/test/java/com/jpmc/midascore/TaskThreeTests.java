@@ -15,8 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
     partitions = 1, 
     brokerProperties = { 
         "listeners=PLAINTEXT://localhost:9092", 
-        "port=9092",
-        "group.initial.rebalance.delay.ms=5000" // Yeh line add karein
+        "port=9092"
     }
 )
 public class TaskThreeTests {
@@ -33,36 +32,28 @@ public class TaskThreeTests {
 
     @Test
     void task_three_verifier() throws InterruptedException {
+        // 1. Data populate karein
         userPopulator.populate();
+        
+        // 2. Transactions load karke Kafka pe bhejein
         String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
         for (String transactionLine : transactionLines) {
             kafkaProducer.send(transactionLine);
         }
         
-        // Kafka process hone ka wait
-       Thread.sleep(20000); 
+        // 3. Kafka process hone ka wait (Kafka asynchronous hota hai)
+        logger.info("Kafka process hone ka wait kar rahe hain...");
+        Thread.sleep(15000); 
 
-var allUsers = userRepository.findAll();
-logger.info("DEBUG: Database mein kitne users hain: " + allUsers.size());
-for (var user : allUsers) {
-    logger.info("DEBUG: User mila: " + user.getName() + " | Balance: " + user.getBalance());
-}
-
-var waldorf = userRepository.findByName("Waldorf");
-if (waldorf == null) {
-    logger.info("ERROR: Waldorf database mein nahi mila!");
-} else {
-    logger.info("**********************************************************");
-    logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
-    logger.info("**********************************************************");
-}
-        
-
+        // 4. Database se Waldorf ka balance nikalein
         var waldorf = userRepository.findByName("Waldorf");
+        
         if (waldorf != null) {
             logger.info("**********************************************************");
             logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
             logger.info("**********************************************************");
+        } else {
+            logger.error("Waldorf database mein nahi mila!");
         }
     }
 }
