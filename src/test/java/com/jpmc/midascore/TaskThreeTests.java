@@ -1,35 +1,38 @@
 package com.jpmc.midascore;
 
-import org.junit.jupiter.api.BeforeEach; // Naya import
+import com.jpmc.midascore.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
+import static org.junit.jupiter.api.Assertions.assertNotNull; // YE ADD KAREIN
 
 @SpringBootTest(classes = MidasCoreApplication.class)
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, topics = {"midas-transactions"})
 public class TaskThreeTests {
 
-    @BeforeEach
-    void setup() {
-        System.out.println(">>> [DEBUG] SETUP CHAL GAYA HAI");
-    }
+    @Autowired private KafkaProducer kafkaProducer;
+    @Autowired private UserPopulator userPopulator;
+    @Autowired private FileLoader fileLoader;
+    @Autowired private UserRepository userRepository;
 
- @Test
-void task_three_verifier() throws InterruptedException {
-    userPopulator.populate();
-    String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
-    for (String transactionLine : transactionLines) {
-        kafkaProducer.send(transactionLine);
-    }
-    
-    // Kafka ko process karne ka time dein
-    Thread.sleep(5000); 
+    @Test
+    void task_three_verifier() throws InterruptedException {
+        userPopulator.populate();
+        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
+        for (String transactionLine : transactionLines) {
+            kafkaProducer.send(transactionLine);
+        }
+        
+        // 5 seconds ka wait
+        Thread.sleep(5000); 
 
-    // RESULT PRINT KAREIN (Yahi aapko chahiye)
-    var waldorf = userRepository.findByName("Waldorf");
-    System.out.println("\n\n################################################");
-    System.out.println("WALDORF BALANCE: " + waldorf.getBalance());
-    System.out.println("################################################\n\n");
+        var waldorf = userRepository.findByName("Waldorf");
+        
+        // Yahan assert use karein, isse framework ko signal milega ki test complete ho gaya hai
+        assertNotNull(waldorf, "Waldorf database mein nahi mila!");
+        System.out.println(">>> WALDORF FINAL BALANCE IS: " + waldorf.getBalance());
+    }
 }
