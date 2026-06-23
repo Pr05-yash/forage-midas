@@ -1,5 +1,7 @@
 package com.jpmc.midascore;
 
+import com.jpmc.midascore.entity.User;
+import com.jpmc.midascore.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,42 +16,34 @@ import org.springframework.test.annotation.DirtiesContext;
 public class TaskFourTests {
     static final Logger logger = LoggerFactory.getLogger(TaskFourTests.class);
 
-    @Autowired
-    private KafkaProducer kafkaProducer;
-
-    @Autowired
-    private UserPopulator userPopulator;
-    @Test
-void task_four_verifier() throws InterruptedException {
-    // 1. Pehle thoda wait karein taaki Kafka fully start ho jaye
-    Thread.sleep(10000); 
-
-    userPopulator.populate();
-    
-    // ... baaki ka code ...
-
-    @Autowired
-    private FileLoader fileLoader;
-    
-    // Yahan aap apna repository inject karein (jaise UserRepository)
-    @Autowired
-    private UserRepository userRepository; 
+    @Autowired private KafkaProducer kafkaProducer;
+    @Autowired private UserPopulator userPopulator;
+    @Autowired private FileLoader fileLoader;
+    @Autowired private UserRepository userRepository;
 
     @Test
     void task_four_verifier() throws InterruptedException {
+        // 1. Data populate karein
         userPopulator.populate();
+        
+        // 2. Transactions load karke bhejein
         String[] transactionLines = fileLoader.loadStrings("/test_data/alskdjfh.fhdjsk");
         for (String transactionLine : transactionLines) {
             kafkaProducer.send(transactionLine);
         }
         
-        // Kafka ko process karne ka time dein
-        Thread.sleep(5000); 
+        // 3. Kafka ko processing ke liye time dein (Incentive API call include hai)
+        Thread.sleep(10000); 
 
-        // Wilbur ka balance fetch karke print karein
+        // 4. Wilbur ka balance fetch karein
         User wilbur = userRepository.findByName("Wilbur");
-        logger.info("**********************************************************");
-        logger.info("FINAL BALANCE OF WILBUR: " + wilbur.getBalance());
-        logger.info("**********************************************************");
+        
+        if (wilbur != null) {
+            logger.info("**********************************************************");
+            logger.info("FINAL BALANCE OF WILBUR: " + (int) wilbur.getBalance());
+            logger.info("**********************************************************");
+        } else {
+            logger.error("Wilbur nahi mila!");
+        }
     }
 }
