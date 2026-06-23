@@ -1,5 +1,6 @@
 package com.jpmc.midascore;
 
+import com.jpmc.midascore.entity.Balance; // Import confirm karein
 import com.jpmc.midascore.entity.User;
 import com.jpmc.midascore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,13 @@ public class BalanceController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/balance")
+    // Path ko explicitly define kiya hai
+    @GetMapping(path = "/balance")
     public Balance getBalance(@RequestParam(name = "userId") Long userId) {
         User user = userRepository.findById(userId).orElse(null);
-        return (user == null) ? new Balance(0.0) : new Balance(user.getBalance());
+        if (user == null) {
+            return new Balance(0.0);
+        }
+        return new Balance(user.getBalance());
     }
 }
