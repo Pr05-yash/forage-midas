@@ -13,7 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 @EmbeddedKafka(
     partitions = 1, 
-    topics = {"midas-transactions"}, 
+    topics = {"midas-transactions"}, // Topic ka naam yahan hona zaroori hai
     brokerProperties = { 
         "listeners=PLAINTEXT://localhost:9092", 
         "port=9092"
