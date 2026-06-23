@@ -38,9 +38,23 @@ public class TaskThreeTests {
         logger.info("----------------------------------------------------------");
         logger.info("use your debugger to find out what waldorf's balance is after all transactions are processed");
         logger.info("kill this test once you find the answer");
-        while (true) {
-            Thread.sleep(20000);
-            logger.info("...");
+       @Autowired
+    private com.jpmc.midascore.repository.UserRepository userRepository; // Import add karna padega
+
+    @Test
+    void task_three_verifier() throws InterruptedException {
+        userPopulator.populate();
+        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
+        for (String transactionLine : transactionLines) {
+            kafkaProducer.send(transactionLine);
         }
+        Thread.sleep(5000); // 5 sec wait
+
+        // Waldorf ka balance fetch karein
+        var waldorf = userRepository.findByName("Waldorf");
+        logger.info("**********************************************************");
+        logger.info("WALDORF BALANCE: " + (int) Math.floor(waldorf.getBalance()));
+        logger.info("**********************************************************");
+    }
     }
 }
