@@ -38,6 +38,7 @@ void task_three_verifier() throws InterruptedException {
     if (waldorf != null) {
         System.out.println("----------------------------------------------");
         System.out.println("WALDORF FINAL BALANCE: " + (int) waldorf.getBalance());
+        System.exit(0);
         System.out.println("----------------------------------------------");
     } else {
         System.out.println("!!! WALDORF NOT FOUND IN DATABASE !!!");
