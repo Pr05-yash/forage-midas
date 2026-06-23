@@ -1,5 +1,6 @@
 package com.jpmc.midascore;
 
+import com.jpmc.midascore.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +17,12 @@ public class TaskThreeTests {
 
     @Autowired
     private KafkaProducer kafkaProducer;
-
     @Autowired
     private UserPopulator userPopulator;
-
     @Autowired
     private FileLoader fileLoader;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void task_three_verifier() throws InterruptedException {
@@ -30,31 +31,15 @@ public class TaskThreeTests {
         for (String transactionLine : transactionLines) {
             kafkaProducer.send(transactionLine);
         }
-        Thread.sleep(2000);
+        
+        // Kafka process hone ka wait
+        Thread.sleep(10000); 
 
-
-        logger.info("----------------------------------------------------------");
-        logger.info("----------------------------------------------------------");
-        logger.info("----------------------------------------------------------");
-        logger.info("use your debugger to find out what waldorf's balance is after all transactions are processed");
-        logger.info("kill this test once you find the answer");
-       @Autowired
-    private com.jpmc.midascore.repository.UserRepository userRepository; // Import add karna padega
-
-    @Test
-    void task_three_verifier() throws InterruptedException {
-        userPopulator.populate();
-        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
-        for (String transactionLine : transactionLines) {
-            kafkaProducer.send(transactionLine);
-        }
-        Thread.sleep(5000); // 5 sec wait
-
-        // Waldorf ka balance fetch karein
         var waldorf = userRepository.findByName("Waldorf");
-        logger.info("**********************************************************");
-        logger.info("WALDORF BALANCE: " + (int) Math.floor(waldorf.getBalance()));
-        logger.info("**********************************************************");
-    }
+        if (waldorf != null) {
+            logger.info("**********************************************************");
+            logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
+            logger.info("**********************************************************");
+        }
     }
 }
