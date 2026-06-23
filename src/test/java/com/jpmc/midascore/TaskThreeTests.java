@@ -11,7 +11,14 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(
+    partitions = 1, 
+    brokerProperties = { 
+        "listeners=PLAINTEXT://localhost:9092", 
+        "port=9092",
+        "group.initial.rebalance.delay.ms=5000" // Yeh line add karein
+    }
+)
 public class TaskThreeTests {
     static final Logger logger = LoggerFactory.getLogger(TaskThreeTests.class);
 
