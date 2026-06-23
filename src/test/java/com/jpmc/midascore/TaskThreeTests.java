@@ -30,29 +30,30 @@ public class TaskThreeTests {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    void task_three_verifier() throws InterruptedException {
-        // 1. Data populate karein
-        userPopulator.populate();
-        
-        // 2. Transactions load karke Kafka pe bhejein
-        String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
-        for (String transactionLine : transactionLines) {
-            kafkaProducer.send(transactionLine);
-        }
-        
-        // 3. Kafka process hone ka wait (Kafka asynchronous hota hai)
-        logger.info("Kafka process hone ka wait kar rahe hain...");
-        Thread.sleep(15000); 
+  @Test
+void task_three_verifier() throws InterruptedException {
+    // 1. Data populate karein
+    userPopulator.populate();
+    
+    // 2. Transactions load karke Kafka pe bhejein
+    String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
+    for (String transactionLine : transactionLines) {
+        kafkaProducer.send(transactionLine);
+    }
+    
+    // 3. Kafka process hone ka wait (30 seconds)
+    System.out.println("Processing transactions...");
+    Thread.sleep(30000); 
 
-        // 4. Database se Waldorf ka balance nikalein
-        var waldorf = userRepository.findByName("Waldorf");
-        
-      // Ise ADD kar dein:
-        System.out.println("\n\n##########################################################");
-        if (waldorf != null) {
-            System.out.println("WALDORF FINAL BALANCE IS: " + (int) Math.floor(waldorf.getBalance()));
-        } else {
-            System.out.println("ERROR: WALDORF DATABASE MEIN NAHI MILA!");
-        }
-        System.out.println("##########################################################\n\n");
+    // 4. Database se Waldorf ka balance nikalein
+    var waldorf = userRepository.findByName("Waldorf");
+    
+    // 5. Result print karein
+    System.out.println("\n\n##########################################################");
+    if (waldorf != null) {
+        System.out.println("WALDORF FINAL BALANCE IS: " + waldorf.getBalance());
+    } else {
+        System.out.println("ERROR: WALDORF DATABASE MEIN NAHI MILA!");
+    }
+    System.out.println("##########################################################\n\n");
+}
