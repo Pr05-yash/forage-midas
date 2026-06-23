@@ -13,17 +13,9 @@ public class BalanceController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/balance")
+    @GetMapping(value = "/balance")
     public Balance getBalance(@RequestParam(name = "userId") Long userId) {
-        // User ko database se dhoondein
         User user = userRepository.findById(userId).orElse(null);
-        
-        // Agar user nahi mila, toh balance 0 return karein
-        if (user == null) {
-            return new Balance(0.0);
-        }
-        
-        // Agar user mila, toh uska balance return karein
-        return new Balance(user.getBalance());
+        return (user == null) ? new Balance(0.0) : new Balance(user.getBalance());
     }
 }
