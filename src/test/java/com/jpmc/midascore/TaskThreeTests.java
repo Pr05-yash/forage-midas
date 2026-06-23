@@ -33,7 +33,7 @@ public class TaskThreeTests {
         }
         
         // Kafka process hone ka wait
-       Thread.sleep(10000); 
+       Thread.sleep(20000); 
 
 var allUsers = userRepository.findAll();
 logger.info("DEBUG: Database mein kitne users hain: " + allUsers.size());
