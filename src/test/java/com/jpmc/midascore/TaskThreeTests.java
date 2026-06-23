@@ -16,26 +16,20 @@ public class TaskThreeTests {
         System.out.println(">>> [DEBUG] SETUP CHAL GAYA HAI");
     }
 
-   @Test
+ @Test
 void task_three_verifier() throws InterruptedException {
     userPopulator.populate();
-    
     String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
     for (String transactionLine : transactionLines) {
         kafkaProducer.send(transactionLine);
     }
     
-    // Kafka process hone ke liye 5 second ka wait
+    // Kafka ko process karne ka time dein
     Thread.sleep(5000); 
 
+    // RESULT PRINT KAREIN (Yahi aapko chahiye)
     var waldorf = userRepository.findByName("Waldorf");
-    
-    // Yahan hum result print kar rahe hain
-    if (waldorf != null) {
-        System.out.println(">>> WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
-    }
-    
-    // ZAROORI: Test ko force finish karne ke liye hum yahan 'return' kar sakte hain 
-    // ya phir simple log ke baad thread sleep hata sakte hain.
-    System.out.println("TEST KAHATAM HUA.");
+    System.out.println("\n\n################################################");
+    System.out.println("WALDORF BALANCE: " + waldorf.getBalance());
+    System.out.println("################################################\n\n");
 }
