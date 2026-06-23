@@ -9,11 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 
-@SpringBootTest
+@SpringBootTest(classes = MidasCoreApplication.class) // Ye change karein
 @DirtiesContext
 @EmbeddedKafka(
     partitions = 1, 
-    topics = {"midas-transactions"}, // Topic ka naam yahan hona zaroori hai
+    topics = {"midas-transactions"},
     brokerProperties = { 
         "listeners=PLAINTEXT://localhost:9092", 
         "port=9092"
