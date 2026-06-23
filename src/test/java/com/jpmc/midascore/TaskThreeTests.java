@@ -43,13 +43,12 @@ void task_three_verifier() throws InterruptedException {
     
     // 3. Kafka process hone ka wait (30 seconds)
     System.out.println("Processing transactions...");
-    Thread.sleep(30000); 
+  // Kafka process hone ka wait
+        Thread.sleep(10000); 
 
-    // 4. Database se Waldorf ka balance nikalein
-    var waldorf = userRepository.findByName("Waldorf");
-    
-    // 5. Result print karein
-    System.out.println("\n\n##########################################################");
+        // Balance fetch aur print
+        var waldorf = userRepository.findByName("Waldorf");
+        System.out.println(">>> WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
     if (waldorf != null) {
         System.out.println("WALDORF FINAL BALANCE IS: " + waldorf.getBalance());
     } else {
