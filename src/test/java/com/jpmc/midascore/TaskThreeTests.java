@@ -31,12 +31,11 @@ public class TaskThreeTests {
     @Autowired
     private UserRepository userRepository;
 
- @Test
+@Test
 void task_three_verifier() throws InterruptedException {
-    System.out.println(">>> TEST START HO GAYA HAI!");
     userPopulator.populate();
     
-    // Kafka ko settle hone ka time dein
+    // Kafka ko message process karne ke liye time dein
     Thread.sleep(5000); 
     
     String[] transactionLines = fileLoader.loadStrings("/test_data/mnbvcxz.vbnm");
@@ -44,16 +43,15 @@ void task_three_verifier() throws InterruptedException {
         kafkaProducer.send(transactionLine);
     }
     
-    // Process hone ka wait
+    // Yahan main wait 10 seconds ka hai, isse zyada nahi
     Thread.sleep(10000); 
 
     var waldorf = userRepository.findByName("Waldorf");
     
-    System.out.println("\n\n##########################################################");
+    // PRINT RESULT
     if (waldorf != null) {
-        System.out.println(">>> WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
+        System.out.println("WALDORF FINAL BALANCE: " + waldorf.getBalance());
     } else {
-        System.out.println("ERROR: WALDORF DATABASE MEIN NAHI MILA!");
+        System.out.println("WALDORF NAHI MILA!");
     }
-    System.out.println("##########################################################\n\n");
 }
