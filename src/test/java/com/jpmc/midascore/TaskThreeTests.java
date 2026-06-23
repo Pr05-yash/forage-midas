@@ -48,6 +48,7 @@ public class TaskThreeTests {
         // 4. Database se Waldorf ka balance nikalein
         var waldorf = userRepository.findByName("Waldorf");
         
+       // Ise REMOVE (Delete) kar dein:
         if (waldorf != null) {
             logger.info("**********************************************************");
             logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
@@ -55,5 +56,3 @@ public class TaskThreeTests {
         } else {
             logger.error("Waldorf database mein nahi mila!");
         }
-    }
-}
