@@ -34,6 +34,16 @@ public class TaskThreeTests {
         
         // Kafka process hone ka wait
         Thread.sleep(10000); 
+        // --- YEH CODE MISSING HAI, ISE ADD KAREIN ---
+        var waldorf = userRepository.findByName("Waldorf");
+        if (waldorf != null) {
+            logger.info("**********************************************************");
+            logger.info("WALDORF FINAL BALANCE: " + (int) Math.floor(waldorf.getBalance()));
+            logger.info("**********************************************************");
+        }
+        // ---------------------------------------------
+    }
+}
 
         var waldorf = userRepository.findByName("Waldorf");
         if (waldorf != null) {
