@@ -19,6 +19,14 @@ public class TaskFourTests {
 
     @Autowired
     private UserPopulator userPopulator;
+    @Test
+void task_four_verifier() throws InterruptedException {
+    // 1. Pehle thoda wait karein taaki Kafka fully start ho jaye
+    Thread.sleep(10000); 
+
+    userPopulator.populate();
+    
+    // ... baaki ka code ...
 
     @Autowired
     private FileLoader fileLoader;
